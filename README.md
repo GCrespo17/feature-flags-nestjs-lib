@@ -7,7 +7,7 @@
 
 Una librería moderna y fácil de usar para implementar **feature flags** en aplicaciones NestJS. Permite controlar la activación de funcionalidades basándose en ambiente, usuarios específicos o configuraciones personalizadas.
 
-**Proyecto desarrollado para Tópicos Especiales de Programación**nestjs.svg)](https://badge.fury.io/js/feature-flags-nestjs)
+**Proyecto desarrollado para Tópicos Especiales de Programación**
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-Compatible-red.svg)](https://nestjs.com/)
 [![License: ISC](https://img.shields.io/badge/License-ISC-yellow.svg)](https://opensource.org/licenses/ISC)
