@@ -7,7 +7,7 @@
 
 Una librería moderna y fácil de usar para implementar **feature flags** en aplicaciones NestJS. Permite controlar la activación de funcionalidades basándose en ambiente, usuarios específicos o configuraciones personalizadas.
 
-**Proyecto desarrollado para Tópicos Especiales de Programación**nestjs.svg)](https://badge.fury.io/js/feature-flags-nestjs)
+**Proyecto desarrollado para Tópicos Especiales de Programación**
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-Compatible-red.svg)](https://nestjs.com/)
 [![License: ISC](https://img.shields.io/badge/License-ISC-yellow.svg)](https://opensource.org/licenses/ISC)
@@ -423,15 +423,3 @@ return showVersionA ? this.getVersionA() : this.getVersionB();
 3. Haz commit de tus cambios (`git commit -m 'Agrega nueva funcionalidad'`)
 4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
 5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia ISC. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 👨‍💻 Autor
-
-Desarrollado para **Tópicos Especiales de Programación**.
-
----
-
-⭐ Si te gusta este proyecto, ¡no olvides darle una estrella en GitHub!
