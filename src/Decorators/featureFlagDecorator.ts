@@ -1,27 +1,26 @@
 import 'reflect-metadata';
-import { FeatureFlagService } from '../services/feature-flag.service'; // ajusta ruta si cambias carpetas
+import { FeatureFlagService } from '../services/feature-flag.service';
 
-// Este servicio podría venir de inyección externa, pero aquí usamos instancia directa
+// Instancia del servicio de feature flags
 const flagService = new FeatureFlagService();
 export const FEATURE_FLAG_METADATA_KEY = 'feature-flag';
 
-// Puedes cargar flags manualmente o desde un módulo central
-flagService.loadConfiguration({
-  nuevoDashboard: {
-    enabled: true,
-    environment: ['prod'],
-    users: ['admin', 'dev']
-  }
-});
+/**
+ * Carga la configuración de feature flags
+ * Este método debe ser llamado antes de usar los decoradores
+ * @param config - configuración de las feature flags
+ */
+export function loadFeatureFlagConfiguration(config: any): void {
+  flagService.loadConfiguration(config);
+}
 
-// ...existing code...
-// ...existing code...
-export function FeatureFlag(flagName: string) {
-  return function (
-    target: Object,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ): void | PropertyDescriptor { // <-- Cambia aquí
+/**
+ * Decorador que valida feature flags antes de ejecutar un método
+ */
+export function FeatureFlag(flagName: string): any {
+  return function (target: any, propertyKey: string, descriptor: any): any {
+    
+    // Guardar metadata
     Reflect.defineMetadata(
       FEATURE_FLAG_METADATA_KEY,
       flagName,
@@ -29,12 +28,20 @@ export function FeatureFlag(flagName: string) {
       propertyKey
     );
 
+    // Si no hay descriptor o no es función, salir
+    if (!descriptor || !descriptor.value) {
+      return descriptor;
+    }
+
+    // Guardar el método original
     const originalMethod = descriptor.value;
 
+    // Reemplazar con validación
     descriptor.value = function (...args: any[]) {
+      // Contexto que puedes personalizar
       const context = {
-        user: 'admin',
-        environment: 'prod'
+        user: 'admin',        // ← Cambiar por contexto real
+        environment: 'prod'   // ← Cambiar por ambiente real
       };
 
       const isEnabled = flagService.isFeatureEnabled(flagName, context);
@@ -49,18 +56,17 @@ export function FeatureFlag(flagName: string) {
     return descriptor;
   };
 }
-// ...existing code...
+
 /**
  * Obtiene el nombre de la feature flag asociada a un método decorado
- * @param target - prototipo de clase (ej. Controller.prototype)
- * @param propertyKey - nombre del método
- * @returns nombre de la flag o undefined
  */
-export function getFeatureFlagName(
-  target: Object,
-  propertyKey: string | symbol
-): string | undefined {
+export function getFeatureFlagName(target: any, propertyKey: string | symbol): string | undefined {
   return Reflect.getMetadata(FEATURE_FLAG_METADATA_KEY, target, propertyKey);
 }
 
-
+/**
+ * Obtiene el servicio de feature flags (para uso avanzado)
+ */
+export function getFeatureFlagService(): FeatureFlagService {
+  return flagService;
+}
