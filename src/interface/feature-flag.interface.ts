@@ -6,6 +6,12 @@ export interface FeatureFlagConfig{
 
     //Usuarios que pueden usarla: ['admin', 'tester']
     users?: string[];
+
+    //Define si esta encendida o apagada
+    enabled?: boolean;
+
+    //Describe para que sirve la feature flag
+    description?: string;
 }
 
 //Configuracion completa de todas las feature flags
