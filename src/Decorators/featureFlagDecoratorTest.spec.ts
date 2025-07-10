@@ -1,8 +1,57 @@
 import 'reflect-metadata';
-import { FeatureFlag, FEATURE_FLAG_METADATA_KEY, getFeatureFlagName } from './featureFlagDecorator';
-
+import { 
+  FeatureFlag, 
+  FEATURE_FLAG_METADATA_KEY, 
+  getFeatureFlagName,
+  loadFeatureFlagConfiguration
+} from './featureFlagDecorator';
 
 describe('FeatureFlag Decorator', () => {
+  
+  // ========================================
+  // SETUP: Cargar configuración antes de las pruebas
+  // ========================================
+  beforeAll(() => {
+    // Configurar las feature flags para los tests
+    loadFeatureFlagConfiguration({
+      testFeature: {
+        enabled: true
+      },
+      mathFlag: {
+        enabled: true
+      },
+      inputFlag: {
+        enabled: true
+      },
+      greetingFlag: {
+        enabled: true
+      },
+      baseFlag: {
+        enabled: true
+      },
+      childFlag: {
+        enabled: true
+      },
+      flagA: {
+        enabled: true
+      },
+      flagB: {
+        enabled: true
+      },
+      nuevoDashboard: {
+        enabled: true,
+        environment: ['prod'],
+        users: ['admin', 'dev']
+      },
+      featureDeshabilitada: {
+        enabled: false
+      },
+      featureInexistente: {
+        enabled: false
+      }
+    });
+  });
+
   describe('@FeatureFlag metadata behavior', () => {
     it('should attach metadata to a decorated method', () => {
       class TestController {
@@ -43,7 +92,7 @@ describe('FeatureFlag Decorator', () => {
       expect(getFeatureFlagName(MultiFeature.prototype, 'c')).toBeUndefined();
     });
 
-    it('should not affect original method execution', () => {
+    it('should not affect original method execution when flag is enabled', () => {
       class Controller {
         @FeatureFlag('mathFlag')
         compute(): number {
@@ -111,35 +160,45 @@ describe('FeatureFlag Decorator', () => {
     });
   });
 
-  describe('FeatureFlagService integration mock', () => {
-    // Simulación directa en el decorador ya que usas instancia única
-    it('should throw if feature is disabled in context', () => {
-      class Controller {
-        @FeatureFlag('nuevoDashboard')
-        render() {
-          return 'Visible';
-        }
-      }
-
-      const instance = new Controller();
-
-      // Tu decorador lanza Error si el contexto no habilita la flag
-      expect(() => instance.render()).toThrow(
-        /La feature "nuevoDashboard" está desactivada/
-      );
-    });
-
+  describe('FeatureFlagService integration', () => {
     it('should execute method if flag is enabled', () => {
       class Controller {
         @FeatureFlag('nuevoDashboard')
         render() {
-          return 'Visible';
+          return 'Dashboard visible';
         }
       }
 
-      // En tu decorador, el flagService está cargado para permitir 'nuevoDashboard' en 'prod' y 'admin'
-      const result = new Controller().render();
-      expect(result).toBe('Visible');
+      const instance = new Controller();
+      expect(instance.render()).toBe('Dashboard visible');
+    });
+
+    it('should throw error for disabled feature', () => {
+      class Controller {
+        @FeatureFlag('featureDeshabilitada')
+        render() {
+          return 'Nunca se ejecuta';
+        }
+      }
+
+      const instance = new Controller();
+      expect(() => instance.render()).toThrow(
+        /La feature "featureDeshabilitada" está desactivada/
+      );
+    });
+
+    it('should throw error for non-existent feature', () => {
+      class Controller {
+        @FeatureFlag('noExisteEnLaConfig')
+        render() {
+          return 'Nunca se ejecuta';
+        }
+      }
+
+      const instance = new Controller();
+      expect(() => instance.render()).toThrow(
+        /La feature "noExisteEnLaConfig" está desactivada/
+      );
     });
   });
 });
